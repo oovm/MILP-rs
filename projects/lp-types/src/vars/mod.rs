@@ -1,5 +1,4 @@
 use crate::{utils::DisplayWrapper, LinearConstraint};
-use num::{BigInt, BigUint};
 use std::fmt::{Debug, Display, Formatter};
 
 mod convert;

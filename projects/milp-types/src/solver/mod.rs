@@ -1,23 +1,25 @@
-use milp_types::{
+use crate::{MixedEquation, MixedVariable};
+use lp_types::{
     utils::{DisplayList, DisplayWrapper},
-    LinearConstraint, LinearEquation, LinearSolver, LinearVariable, MixedEquation, MixedVariable, OptimizeDirection,
+    LinearSolver, OptimizeDirection,
 };
 use std::{
     collections::BTreeMap,
-    fmt::{Debug, Display, Formatter},
+    fmt::{Debug, Formatter},
 };
+
 mod display;
 
-pub struct MixedLinearSolver {
+pub struct MixedLinearDescriptor {
     variables: BTreeMap<String, MixedVariable>,
     constraints: Vec<MixedEquation>,
     direct: OptimizeDirection,
     epsilon: f64,
 }
 
-impl LinearSolver for MixedLinearSolver {}
+impl LinearSolver for MixedLinearDescriptor {}
 
-impl MixedLinearSolver {
+impl MixedLinearDescriptor {
     pub fn new(maximize: bool) -> Self {
         Self { variables: BTreeMap::new(), constraints: Vec::new(), direct: OptimizeDirection::from(maximize), epsilon: 1e-6 }
     }
@@ -27,10 +29,10 @@ impl MixedLinearSolver {
     pub fn add_variable(&mut self, variable: MixedVariable) {
         self.variables.insert(variable.get_symbol().to_string(), variable);
     }
-    pub fn add_equation(&mut self, equation: MixedVariable) {
+    pub fn add_equation(&mut self, equation: MixedEquation) {
         for variable in equation.variables() {
             if !self.variables.contains_key(variable) {
-                self.variables.insert(variable.to_string(), LinearVariable::new(variable));
+                self.variables.insert(variable.to_string(), MixedVariable::free(variable));
             }
         }
         self.constraints.push(equation);
@@ -43,8 +45,8 @@ impl MixedLinearSolver {
 
 #[test]
 fn test() {
-    let mut problem = MixedLinearSolver::new(true);
-    let mut e1 = LinearEquation::new(LinearConstraint::le(1.0)).unwrap();
+    let mut problem = MixedLinearDescriptor::new(true);
+    let mut e1 = MixedEquation::new(MixedConstraint::le(1.0)).unwrap();
     e1.add_coefficient(1.0, "x");
     e1.add_coefficient(1.0, "y");
     problem.add_equation(e1);

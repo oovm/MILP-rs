@@ -1,17 +1,18 @@
 [package]
 name = "milp-types"
-version = "0.0.0"
+version = "0.0.1"
 authors = ["Aster <192607617@qq.com>"]
-description = "Mixed integer linear programming solver"
+description = "Mixed integer linear programming types"
 repository = "https://github.com/oovm/milp-rs"
-documentation = "https://docs.rs/milp"
+documentation = "https://docs.rs/milp-types"
 readme = "Readme.md"
 license = "MPL-2.0"
 edition = "2021"
 
 [dependencies]
+num = "0.4.0"
 
-[dependencies.milp-types]
+[dependencies.lp-types]
 version = "0.0.0"
 path = "../lp-types"
 features = []

@@ -1,4 +1,4 @@
-use crate::{vars::MixedValue, LinearConstraint, LpResult};
+use crate::{LinearConstraint, LpResult};
 use serde_derive::{Deserialize, Serialize};
 use std::{
     collections::BTreeMap,

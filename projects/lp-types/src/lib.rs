@@ -6,11 +6,9 @@ mod equations;
 mod vars;
 pub use crate::{
     constraints::{LinearConstraint, OptimizeDirection},
-    equations::{LinearCoefficient, LinearEquation, MixedEquation},
+    equations::{LinearCoefficient, LinearEquation},
     errors::{LpError, LpErrorKind, LpResult},
     traits::LinearSolver,
-    vars::{LinearVariable, MixedVariable},
+    vars::LinearVariable,
 };
-pub use num::BigInt;
-pub mod mixed;
 pub mod utils;

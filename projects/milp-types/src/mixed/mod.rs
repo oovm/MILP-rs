@@ -1,8 +1,15 @@
-use crate::{LinearConstraint, LinearEquation, LinearVariable};
-use num::BigInt;
+use lp_types::{LinearConstraint, LinearEquation, LinearVariable};
+use num::{BigInt, BigUint};
 use std::fmt::{Debug, Display, Formatter};
+mod arithmetic;
 mod convert;
 mod display;
+
+pub enum MixedValue {
+    Boolean(bool),
+    Decimal(f64),
+    Integer(BigInt),
+}
 
 pub struct MixedConstraint {
     wrapper: LinearConstraint<MixedValue>,
@@ -14,12 +21,6 @@ pub struct MixedVariable {
 
 pub struct MixedEquation {
     wrapper: LinearEquation<MixedValue>,
-}
-
-pub enum MixedValue {
-    Boolean(bool),
-    Decimal(f64),
-    Integer(BigInt),
 }
 
 impl MixedVariable {
@@ -63,5 +64,50 @@ impl MixedVariable {
         V: Into<MixedValue>,
     {
         Self { wrapper: LinearVariable::bounds(symbol, bound.wrapper) }
+    }
+    pub fn get_symbol(&self) -> &str {
+        self.wrapper.get_symbol()
+    }
+    // pub fn get_kind(&self) -> &MixedVariableKind {
+    //     self.wrapper.get_kind()
+    // }
+    // pub fn get_bound(&self) -> &MixedConstraint {
+    //     self.wrapper.get_bound()
+    // }
+}
+
+impl MixedEquation {
+    pub fn variables(&self) -> impl Iterator<Item = &str> {
+        self.wrapper.variables()
+    }
+}
+
+impl MixedConstraint {
+    pub fn ge<V>(lower: V) -> Self
+    where
+        V: Into<MixedValue>,
+    {
+        Self { wrapper: LinearConstraint::ge(lower.into()) }
+    }
+    pub fn geq<V>(lower: V) -> Self
+    where
+        V: Into<MixedValue>,
+    {
+        Self { wrapper: LinearConstraint::geq(lower.into()) }
+    }
+    pub fn le<V>(upper: V) -> Self
+    where
+        V: Into<MixedValue>,
+    {
+        Self { wrapper: LinearConstraint::le(upper.into()) }
+    }
+    pub fn leq<V>(upper: V) -> Self
+    where
+        V: Into<MixedValue>,
+    {
+        Self { wrapper: LinearConstraint::leq(upper.into()) }
+    }
+    pub fn contains(&self, variable: &MixedValue) -> bool {
+        self.wrapper.contains(variable)
     }
 }
