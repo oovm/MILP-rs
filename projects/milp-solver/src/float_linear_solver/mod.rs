@@ -30,7 +30,7 @@ impl FloatLinearSolver {
         self.variables.get(symbol)
     }
     pub fn add_variable(&mut self, variable: LinearVariable<f64>) {
-        self.variables.insert(variable.symbol().to_string(), variable);
+        self.variables.insert(variable.get_symbol().to_string(), variable);
     }
     pub fn add_equation(&mut self, equation: LinearEquation<f64>) {
         for variable in equation.variables() {

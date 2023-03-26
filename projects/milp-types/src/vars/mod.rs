@@ -1,11 +1,21 @@
 use crate::{utils::DisplayWrapper, LinearConstraint};
+use num::{BigInt, BigUint};
 use std::fmt::{Debug, Display, Formatter};
 
+mod convert;
 mod display;
 
 pub struct LinearVariable<T> {
+    kind: LinearVariableKind,
     symbol: String,
     bound: LinearConstraint<T>,
+}
+
+#[derive(Debug)]
+pub enum LinearVariableKind {
+    Boolean,
+    Decimal,
+    Integer,
 }
 
 /// Create a new variable with constraints
@@ -15,48 +25,60 @@ impl<T> LinearVariable<T> {
     where
         S: Into<String>,
     {
-        Self { symbol: symbol.into(), bound: LinearConstraint::None }
+        Self { kind: LinearVariableKind::Decimal, symbol: symbol.into(), bound: LinearConstraint::None }
     }
     /// Creates a new variable with the given lower bound.
     pub fn new_ge<S>(symbol: S, lower: T) -> Self
     where
         S: Into<String>,
     {
-        Self { symbol: symbol.into(), bound: LinearConstraint::ge(lower) }
+        Self { kind: LinearVariableKind::Decimal, symbol: symbol.into(), bound: LinearConstraint::ge(lower) }
     }
     /// Creates a new variable with the given lower bound.
     pub fn new_geq<S>(symbol: S, lower: T) -> Self
     where
         S: Into<String>,
     {
-        Self { symbol: symbol.into(), bound: LinearConstraint::geq(lower) }
+        Self { kind: LinearVariableKind::Decimal, symbol: symbol.into(), bound: LinearConstraint::geq(lower) }
     }
     /// Creates a new variable with the given upper bound.
     pub fn new_le<S>(symbol: S, upper: T) -> Self
     where
         S: Into<String>,
     {
-        Self { symbol: symbol.into(), bound: LinearConstraint::le(upper) }
+        Self { kind: LinearVariableKind::Decimal, symbol: symbol.into(), bound: LinearConstraint::le(upper) }
     }
     /// Creates a new variable with the given upper bound.
     pub fn new_leq<S>(symbol: S, upper: T) -> Self
     where
         S: Into<String>,
     {
-        Self { symbol: symbol.into(), bound: LinearConstraint::leq(upper) }
+        Self { kind: LinearVariableKind::Decimal, symbol: symbol.into(), bound: LinearConstraint::leq(upper) }
     }
     /// Creates a new variable with the given lower and upper bounds.
     pub fn new_bounds<S>(symbol: S, bound: LinearConstraint<T>) -> Self
     where
         S: Into<String>,
     {
-        Self { symbol: symbol.into(), bound }
+        Self { kind: LinearVariableKind::Decimal, symbol: symbol.into(), bound }
     }
 }
 
 impl<T> LinearVariable<T> {
-    pub fn symbol(&self) -> &str {
+    pub fn get_symbol(&self) -> &str {
         &self.symbol
+    }
+    pub fn get_kind(&self) -> &LinearVariableKind {
+        &self.kind
+    }
+
+    pub fn set_kind(&mut self, kind: LinearVariableKind) {
+        self.kind = kind;
+    }
+
+    pub fn with_kind(mut self, kind: LinearVariableKind) -> Self {
+        self.kind = kind;
+        self
     }
 }
 

@@ -1,5 +1,5 @@
 use super::*;
-use crate::utils::{DisplayList, DisplayMap, DisplayWrapper};
+use crate::utils::{DisplayMap, DisplayWrapper};
 
 impl<T: Display> Display for LinearEquation<T> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {

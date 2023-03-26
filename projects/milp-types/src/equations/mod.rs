@@ -1,10 +1,11 @@
-use crate::{LinearConstraint, LpResult};
+use crate::{vars::MixedValue, LinearConstraint, LpResult};
 use serde_derive::{Deserialize, Serialize};
 use std::{
     collections::BTreeMap,
     fmt::{Display, Formatter},
     ops::AddAssign,
 };
+
 mod display;
 
 #[derive(Debug)]
