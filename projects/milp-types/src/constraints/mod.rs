@@ -1,5 +1,6 @@
 mod display;
-use std::fmt::Display;
+use std::fmt::{Display, Formatter, Write};
+mod convert;
 #[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum OptimizeDirection {
     Maximize,
@@ -15,15 +16,6 @@ pub enum LinearConstraint<T> {
     NotEqual { value: T },
     Or { left: Box<LinearConstraint<T>>, right: Box<LinearConstraint<T>> },
     And { left: Box<LinearConstraint<T>>, right: Box<LinearConstraint<T>> },
-}
-
-impl From<bool> for OptimizeDirection {
-    fn from(value: bool) -> Self {
-        match value {
-            true => OptimizeDirection::Maximize,
-            false => OptimizeDirection::Minimize,
-        }
-    }
 }
 
 impl<T> Default for LinearConstraint<T> {

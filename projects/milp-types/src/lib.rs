@@ -12,4 +12,4 @@ pub use crate::{
     vars::LinearVariable,
 };
 pub use num::BigInt;
-mod utils;
+pub mod utils;
