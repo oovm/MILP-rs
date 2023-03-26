@@ -1,4 +1,4 @@
-use crate::{utils::DisplayWrapper, LinearConstraint};
+use crate::{utils::DisplayWrapper, LinearConstraint, LpError, LpResult};
 use std::fmt::{Debug, Display, Formatter};
 
 mod convert;
@@ -55,11 +55,13 @@ impl<T> LinearVariable<T> {
         Self { kind: LinearVariableKind::Decimal, symbol: symbol.into(), bound: LinearConstraint::leq(upper) }
     }
     /// Creates a new variable with the given lower and upper bounds.
-    pub fn bounds<S>(symbol: S, bound: LinearConstraint<T>) -> Self
+    pub fn bounds<S>(symbol: S, bound: LinearConstraint<T>) -> LpResult<Self>
     where
-        S: Into<String>,
+        S: AsRef<str>,
     {
-        Self { kind: LinearVariableKind::Decimal, symbol: symbol.into(), bound }
+        let symbol = symbol.as_ref();
+        bound.check_variable().map_err(|e| e.with_label(symbol))?;
+        Ok(Self { kind: LinearVariableKind::Decimal, symbol: symbol.to_string(), bound })
     }
 }
 

@@ -1,17 +1,37 @@
 use crate::{LinearConstraint, LpResult};
+use num_traits::Zero;
 use serde_derive::{Deserialize, Serialize};
 use std::{
     collections::BTreeMap,
     fmt::{Display, Formatter},
-    ops::AddAssign,
+    mem::take,
+    ops::{AddAssign, Neg},
 };
 
+mod arithmetic;
 mod display;
 
 #[derive(Debug)]
 pub struct LinearEquation<T> {
+    lhs: LinearExpression<T>,
+    ops: LinearEquationRelation,
+    rhs: LinearExpression<T>,
+}
+
+#[derive(Debug)]
+pub struct LinearExpression<T> {
+    constant: T,
     coefficients: BTreeMap<String, LinearCoefficient<T>>,
-    constraint: LinearConstraint<T>,
+}
+
+#[derive(Debug)]
+pub enum LinearEquationRelation {
+    Equal,
+    NotEqual,
+    Greater,
+    GreaterOrEqual,
+    Less,
+    LessOrEqual,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -23,27 +43,64 @@ pub struct LinearCoefficient<T> {
 impl<T> LinearCoefficient<T> {}
 
 impl<T> LinearEquation<T> {
-    pub fn new(constraint: LinearConstraint<T>) -> LpResult<Self> {
-        Ok(Self { coefficients: BTreeMap::new(), constraint })
-    }
-    pub fn get_coefficients(&self) -> impl Iterator<Item = (&str, &T)> {
-        self.coefficients.iter().map(|(s, c)| (s.as_str(), &c.coefficients))
-    }
-    pub fn add_coefficient(&mut self, coefficient: T, symbol: &str)
+    pub fn le(lhs: LinearExpression<T>) -> Self
     where
-        T: AddAssign,
+        T: Zero,
     {
-        match self.coefficients.get_mut(symbol) {
-            Some(s) => {
-                s.coefficients += coefficient;
+        Self { lhs, ops: LinearEquationRelation::Less, rhs: LinearExpression::new(T::zero()) }
+    }
+}
+
+impl<T> LinearEquation<T> {
+    pub fn normalize(&mut self) -> Self
+    where
+        T: Default,
+    {
+        match self.ops.needs_flip() {
+            true => {
+                let lhs = take(&mut self.lhs);
+                self.rhs -= lhs;
+                self.flip()
             }
-            None => {
-                self.coefficients
-                    .insert(symbol.to_string(), LinearCoefficient { symbol: symbol.to_string(), coefficients: coefficient });
+            false => {
+                let rhs = take(&mut self.rhs);
+                self.lhs -= rhs;
             }
         }
     }
-    pub fn variables(&self) -> impl Iterator<Item = &str> {
-        self.coefficients.keys().map(|s| s.as_str())
+    pub fn flip(&mut self) {
+        self.ops.flip();
+        std::mem::swap(&mut self.lhs, &mut self.rhs);
+    }
+}
+
+impl LinearEquationRelation {
+    pub fn needs_flip(&self) -> bool {
+        match self {
+            LinearEquationRelation::Equal => false,
+            LinearEquationRelation::NotEqual => false,
+            LinearEquationRelation::Greater => true,
+            LinearEquationRelation::GreaterOrEqual => true,
+            LinearEquationRelation::Less => false,
+            LinearEquationRelation::LessOrEqual => false,
+        }
+    }
+    pub fn flip(&mut self) {
+        *self = self.neg();
+    }
+}
+
+impl Neg for LinearEquationRelation {
+    type Output = Self;
+
+    fn neg(self) -> Self::Output {
+        match self {
+            LinearEquationRelation::Equal => LinearEquationRelation::Equal,
+            LinearEquationRelation::NotEqual => LinearEquationRelation::NotEqual,
+            LinearEquationRelation::Greater => LinearEquationRelation::Less,
+            LinearEquationRelation::GreaterOrEqual => LinearEquationRelation::LessOrEqual,
+            LinearEquationRelation::Less => LinearEquationRelation::Greater,
+            LinearEquationRelation::LessOrEqual => LinearEquationRelation::GreaterOrEqual,
+        }
     }
 }

@@ -5,7 +5,7 @@ impl Debug for MixedLinearDescriptor {
         let variables = self.variables.values().collect::<Vec<_>>();
         f.debug_struct("LinearSolver")
             .field("type", &DisplayWrapper::new(&"f64"))
-            .field("direct", &self.direct)
+            .field("direct", &self.target)
             .field("variables", &DisplayList::new(&variables))
             .field("constraints", &DisplayList::new(&self.constraints))
             .field("epsilon", &self.epsilon)

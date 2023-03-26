@@ -1,4 +1,4 @@
-use lp_types::{LinearConstraint, LinearEquation, LinearVariable};
+use lp_types::{LinearConstraint, LinearEquation, LinearVariable, LpResult};
 use num::{BigInt, BigUint};
 use std::fmt::{Debug, Display, Formatter};
 mod arithmetic;
@@ -58,12 +58,12 @@ impl MixedVariable {
     {
         Self { wrapper: LinearVariable::leq(symbol, upper.into()) }
     }
-    pub fn bounds<S, V>(symbol: S, bound: MixedConstraint) -> Self
+    pub fn bounds<S, V>(symbol: S, bound: MixedConstraint) -> LpResult<Self>
     where
-        S: Into<String>,
+        S: AsRef<str>,
         V: Into<MixedValue>,
     {
-        Self { wrapper: LinearVariable::bounds(symbol, bound.wrapper) }
+        Ok(Self { wrapper: LinearVariable::bounds(symbol, bound.wrapper)? })
     }
     pub fn get_symbol(&self) -> &str {
         self.wrapper.get_symbol()
@@ -77,8 +77,20 @@ impl MixedVariable {
 }
 
 impl MixedEquation {
+    pub fn new(constraint: MixedConstraint) -> LpResult<Self> {
+        Ok(Self { wrapper: LinearEquation::new(constraint.wrapper)? })
+    }
     pub fn variables(&self) -> impl Iterator<Item = &str> {
         self.wrapper.variables()
+    }
+    pub fn add_coefficient<V>(&mut self, coefficient: V, symbol: &str)
+    where
+        V: Into<MixedValue>,
+    {
+        self.wrapper.add_coefficient(coefficient.into(), symbol)
+    }
+    pub fn get_coefficients(&self) -> impl Iterator<Item = (&str, &MixedValue)> {
+        self.wrapper.get_coefficients()
     }
 }
 

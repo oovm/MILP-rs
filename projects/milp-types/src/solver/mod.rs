@@ -1,7 +1,7 @@
-use crate::{MixedEquation, MixedVariable};
+use crate::{MixedEquation, MixedValue, MixedVariable};
 use lp_types::{
     utils::{DisplayList, DisplayWrapper},
-    LinearSolver, OptimizeDirection,
+    LinearEquation, LinearSolver, LinearVariable, OptimizeDirection,
 };
 use std::{
     collections::BTreeMap,
@@ -13,15 +13,18 @@ mod display;
 pub struct MixedLinearDescriptor {
     variables: BTreeMap<String, MixedVariable>,
     constraints: Vec<MixedEquation>,
-    direct: OptimizeDirection,
+    target: MixedEquation,
     epsilon: f64,
 }
 
 impl LinearSolver for MixedLinearDescriptor {}
 
 impl MixedLinearDescriptor {
-    pub fn new(maximize: bool) -> Self {
-        Self { variables: BTreeMap::new(), constraints: Vec::new(), direct: OptimizeDirection::from(maximize), epsilon: 1e-6 }
+    pub fn new(object: MixedEquation) -> Self {
+        Self { variables: BTreeMap::new(), constraints: Vec::new(), target: OptimizeDirection::Maximize, epsilon: 1e-6 }
+    }
+    pub fn minimize() -> Self {
+        Self { variables: BTreeMap::new(), constraints: Vec::new(), target: OptimizeDirection::Minimize, epsilon: 1e-6 }
     }
     pub fn get_variable(&self, symbol: &str) -> Option<&MixedVariable> {
         self.variables.get(symbol)
@@ -43,22 +46,12 @@ impl MixedLinearDescriptor {
     }
 }
 
-#[test]
-fn test() {
-    let mut problem = MixedLinearDescriptor::new(true);
-    let mut e1 = MixedEquation::new(MixedConstraint::le(1.0)).unwrap();
-    e1.add_coefficient(1.0, "x");
-    e1.add_coefficient(1.0, "y");
-    problem.add_equation(e1);
-
-    let mut e2 = LinearEquation::new(LinearConstraint::le(2.0)).unwrap();
-    e2.add_coefficient(1.0, "x");
-    e2.add_coefficient(1.0, "z");
-    problem.add_equation(e2);
-
-    problem.add_variable(LinearVariable::le("x", 1.0));
-    problem.add_variable(LinearVariable::le("y", 1.0));
-    problem.add_variable(LinearVariable::le("z", 1.0));
-
-    println!("{:#?}", problem);
+impl MixedLinearDescriptor {
+    pub fn normalized(&self) -> MixedLinearDescriptor {
+        let mut normed = MixedLinearDescriptor::minimize();
+        match self.target {
+            OptimizeDirection::Maximize => {}
+            OptimizeDirection::Minimize => {}
+        }
+    }
 }

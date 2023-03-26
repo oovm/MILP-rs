@@ -1,5 +1,7 @@
 mod display;
+use crate::{LpError, LpResult};
 use std::fmt::{Display, Formatter, Write};
+
 mod convert;
 #[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum OptimizeDirection {
@@ -42,6 +44,28 @@ impl<T> LinearConstraint<T> {
     }
     pub fn ne(value: T) -> Self {
         LinearConstraint::NotEqual { value }
+    }
+}
+
+impl<T> LinearConstraint<T> {
+    pub fn check_variable(&self) -> LpResult<()> {
+        match self {
+            LinearConstraint::None => {}
+            LinearConstraint::Greater { .. } => {}
+            LinearConstraint::Less { .. } => {}
+            LinearConstraint::Equal { .. } | LinearConstraint::NotEqual { .. } => {
+                Err(LpError::invalid_constraint("Variables cannot constrained by equal or not equal"))?
+            }
+            LinearConstraint::Or { left, right } => {
+                left.check_variable()?;
+                right.check_variable()?;
+            }
+            LinearConstraint::And { left, right } => {
+                left.check_variable()?;
+                right.check_variable()?;
+            }
+        }
+        Ok(())
     }
 }
 
