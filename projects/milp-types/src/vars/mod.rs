@@ -1,5 +1,6 @@
 use crate::LinearConstraint;
 
+#[derive(Debug)]
 pub struct LinearVariable<T> {
     symbol: String,
     bound: LinearConstraint<T>,
