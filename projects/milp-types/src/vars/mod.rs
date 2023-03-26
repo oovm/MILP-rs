@@ -1,4 +1,9 @@
-use std::cmp::Ordering;
+use num::BigInt;
+
+pub type FloatLinearVariable = LinearVariable<f64>;
+
+pub type IntegerLinearVariable = LinearVariable<BigInt>;
+
 
 pub struct LinearVariable<T> {
     symbol: String,
@@ -6,56 +11,102 @@ pub struct LinearVariable<T> {
     lower: Option<(T, bool)>,
 }
 
+
+
+/// Create a new variable with constraints
 impl<T> LinearVariable<T> {
+    /// Creates a new variable with no constraints.
     pub fn new<S>(symbol: S) -> Self where S: Into<String> {
         Self {
-            symbol: symbol.to_string(),
+            symbol: symbol.into(),
             upper: None,
             lower: None,
         }
     }
-    pub fn new_ge<S>(symbol: S, constraint: T) -> Self {
+    /// Creates a new variable with the given lower bound.
+    pub fn new_ge<S>(symbol: S, lower: T) -> Self where S: Into<String> {
         Self {
-            symbol,
+            symbol: symbol.into(),
             upper: None,
-            lower: Some((constraint, false)),
+            lower: Some((lower, false)),
         }
     }
-    pub fn new_geq<S>(symbol: S, constraint: T) -> Self {
+    /// Creates a new variable with the given lower bound.
+    pub fn new_geq<S>(symbol: S, lower: T) -> Self where S: Into<String> {
         Self {
-            symbol,
+            symbol: symbol.into(),
             upper: None,
-            lower: Some((constraint, true)),
+            lower: Some((lower, true)),
         }
     }
-    pub fn new_le<S>(symbol: S, constraint: T) -> Self {
+    /// Creates a new variable with the given upper bound.
+    pub fn new_le<S>(symbol: S, upper: T) -> Self where S: Into<String> {
         Self {
-            symbol,
-            upper: Some((constraint, false)),
+            symbol: symbol.into(),
+            upper: Some((upper, false)),
             lower: None,
         }
     }
-    pub fn new_leq<S>(symbol: S, constraint: T) -> Self {
+    /// Creates a new variable with the given upper bound.
+    pub fn new_leq<S>(symbol: S, upper: T) -> Self where S: Into<String> {
         Self {
-            symbol,
-            upper: Some((constraint, true)),
+            symbol: symbol.into(),
+            upper: Some((upper, true)),
             lower: None,
         }
     }
-    pub fn new_between<S>(symbol: S, lower: T, upper: T) -> Self {
+    /// Creates a new variable with the given lower and upper bounds.
+    pub fn new_between<S>(symbol: S, lower: T, upper: T) -> Self where S: Into<String> {
         Self {
-            symbol,
+            symbol: symbol.into(),
             upper: Some((upper, true)),
             lower: Some((lower, true)),
         }
     }
-    pub fn new_bounds<S>(symbol: S, lower: Option<T>, lower_inclusive: bool, upper: T, upper_inclusive: bool) -> Self {
+    /// Creates a new variable with the given lower and upper bounds.
+    pub fn new_bounds<S>(symbol: S, lower: Option<T>, lower_inclusive: bool, upper: Option<T>, upper_inclusive: bool) -> Self where S: Into<String> {
         Self {
-            symbol,
-            upper: Some((upper, false)),
-            lower: Some((lower, false)),
+            symbol: symbol.into(),
+            upper: upper.map(|upper| (upper, upper_inclusive)),
+            lower: lower.map(|lower| (lower, lower_inclusive)),
+        }
+    }
+}
+
+impl<T> LinearVariable<T> {
+    pub fn symbol(&self) -> &str {
+        &self.symbol
+    }
+}
+
+impl<T: PartialOrd> LinearVariable<T> {
+    pub fn contains(&self, other: &T) -> bool {
+        self.satisfy_lower(other) && self.satisfy_upper(other)
+    }
+
+    pub fn satisfy_lower(&self, other: &T) -> bool {
+        match self.lower {
+            Some((ref lower, inclusive)) => {
+                if inclusive {
+                    other >= lower
+                } else {
+                    other > lower
+                }
+            }
+            None => true,
         }
     }
 
+    pub fn satisfy_upper(&self, other: &T) -> bool {
+        match self.upper {
+            Some((ref upper, inclusive)) => {
+                if inclusive {
+                    other <= upper
+                } else {
+                    other < upper
+                }
+            }
+            None => true,
+        }
+    }
 }
-

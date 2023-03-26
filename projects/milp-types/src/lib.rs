@@ -1,10 +1,13 @@
 mod errors;
 mod traits;
 
-use std::collections::BTreeSet;
+
 pub use errors::{Error, Result};
+
 mod vars;
+mod constraints;
 
 pub use num::BigInt;
 
 pub use crate::traits::LinearSolver;
+pub use crate::vars::{FloatLinearVariable, IntegerLinearVariable, LinearVariable};
