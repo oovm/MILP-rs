@@ -2,19 +2,20 @@
 name = "milp-types"
 version = "0.0.0"
 authors = ["Aster <192607617@qq.com>"]
-description = "..."
-repository = "https://github.com/oovm/sub_projects"
-documentation = "https://docs.rs/sub_projects"
+description = "Mixed integer linear programming solver"
+repository = "https://github.com/oovm/milp-rs"
+documentation = "https://docs.rs/milp"
 readme = "Readme.md"
 license = "MPL-2.0"
 edition = "2021"
 
 [dependencies]
-latexify = "0.0.0"
-sprs = "0.11.0"
-num = "0.4.0"
-serde = "1.0.158"
-serde_derive = "1.0.158"
+
+[dependencies.milp-types]
+version = "0.0.0"
+path = "../lp-types"
+features = []
+
 
 [dev-dependencies]
 

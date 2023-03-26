@@ -1,16 +1,9 @@
-mod errors;
-mod traits;
+mod boolean_linear_solver;
+mod float_linear_solver;
+mod integer_linear_solver;
+mod mixed_linear_solver;
 
-mod constraints;
-mod equations;
-mod vars;
 pub use crate::{
-    constraints::{LinearConstraint, OptimizeDirection},
-    equations::{LinearCoefficient, LinearEquation, MixedEquation},
-    errors::{LpError, LpErrorKind, LpResult},
-    traits::LinearSolver,
-    vars::{LinearVariable, MixedVariable},
+    boolean_linear_solver::BoolLinearSolver, float_linear_solver::FloatLinearSolver,
+    integer_linear_solver::IntegerLinearSolver, mixed_linear_solver::MixedLinearSolver,
 };
-pub use num::BigInt;
-pub mod mixed;
-pub mod utils;

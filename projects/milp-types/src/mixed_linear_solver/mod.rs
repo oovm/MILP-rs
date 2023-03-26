@@ -54,9 +54,9 @@ fn test() {
     e2.add_coefficient(1.0, "z");
     problem.add_equation(e2);
 
-    problem.add_variable(LinearVariable::new_le("x", 1.0));
-    problem.add_variable(LinearVariable::new_le("y", 1.0));
-    problem.add_variable(LinearVariable::new_le("z", 1.0));
+    problem.add_variable(LinearVariable::le("x", 1.0));
+    problem.add_variable(LinearVariable::le("y", 1.0));
+    problem.add_variable(LinearVariable::le("z", 1.0));
 
     println!("{:#?}", problem);
 }
