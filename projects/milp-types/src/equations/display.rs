@@ -1,11 +1,11 @@
 use super::*;
-use crate::utils::{DisplayVector, DisplayWrapper};
+use crate::utils::{DisplayList, DisplayMap, DisplayWrapper};
 
 impl<T: Display> Display for LinearEquation<T> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        let coefficients = self.coefficients.values().collect::<Vec<_>>();
-        f.debug_struct("LinearEquation")
-            .field("coefficients", &DisplayVector::new(&coefficients))
+        let cs: DisplayMap<&str, &T> = self.get_coefficients().collect();
+        f.debug_struct("Equation")
+            .field("coefficients", &cs)
             .field("constraint", &DisplayWrapper::new(&self.constraint))
             .finish()
     }

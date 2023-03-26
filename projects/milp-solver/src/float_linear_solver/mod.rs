@@ -1,5 +1,5 @@
 use milp_types::{
-    utils::{DisplayVector, DisplayWrapper},
+    utils::{DisplayList, DisplayWrapper},
     LinearConstraint, LinearEquation, LinearSolver, LinearVariable, OptimizeDirection,
 };
 use std::{

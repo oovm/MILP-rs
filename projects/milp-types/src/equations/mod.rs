@@ -25,6 +25,9 @@ impl<T> LinearEquation<T> {
     pub fn new(constraint: LinearConstraint<T>) -> LpResult<Self> {
         Ok(Self { coefficients: BTreeMap::new(), constraint })
     }
+    pub fn get_coefficients(&self) -> impl Iterator<Item = (&str, &T)> {
+        self.coefficients.iter().map(|(s, c)| (s.as_str(), &c.coefficients))
+    }
     pub fn add_coefficient(&mut self, coefficient: T, symbol: &str)
     where
         T: AddAssign,
