@@ -1,9 +1,20 @@
-use crate::LinearConstraint;
+use crate::{utils::DisplayInDebug, LinearConstraint};
+use std::fmt::{Debug, Display, Formatter};
 
-#[derive(Debug)]
+mod display;
+
 pub struct LinearVariable<T> {
     symbol: String,
     bound: LinearConstraint<T>,
+}
+
+impl<T: Display> Debug for LinearVariable<T> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Variable")
+            .field("symbol", &DisplayInDebug::new(&self.symbol))
+            .field("bound", &DisplayInDebug::new(&self.bound))
+            .finish()
+    }
 }
 
 /// Create a new variable with constraints
