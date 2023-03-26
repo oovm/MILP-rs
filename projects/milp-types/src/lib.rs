@@ -1,13 +1,14 @@
 mod errors;
 mod traits;
 
+pub use crate::errors::{LpError, LpErrorKind, LpResult};
 
-pub use errors::{Error, Result};
-
-mod vars;
 mod constraints;
+mod equations;
+mod vars;
+
+pub use crate::equations::LinearEquation;
 
 pub use num::BigInt;
 
-pub use crate::traits::LinearSolver;
-pub use crate::vars::{FloatLinearVariable, IntegerLinearVariable, LinearVariable};
+pub use crate::{constraints::LinearConstraint, traits::LinearSolver, vars::LinearVariable};

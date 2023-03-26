@@ -1,6 +1,8 @@
 #[derive(Debug, Copy, Clone)]
-pub enum Error {
-    UnknownError
+pub enum LpErrorKind {
+    UnknownError,
 }
 
-pub type Result<T> = std::result::Result<T, Error>;
+pub struct LpError {}
+
+pub type LpResult<T = ()> = std::result::Result<T, LpErrorKind>;
