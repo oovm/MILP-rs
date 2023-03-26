@@ -1,5 +1,11 @@
 use crate::{LinearConstraint, LpResult};
-use std::{collections::BTreeMap, ops::AddAssign};
+use serde_derive::{Deserialize, Serialize};
+use std::{
+    collections::BTreeMap,
+    fmt::{Display, Formatter},
+    ops::AddAssign,
+};
+mod display;
 
 #[derive(Debug)]
 pub struct LinearEquation<T> {
@@ -7,7 +13,7 @@ pub struct LinearEquation<T> {
     constraint: LinearConstraint<T>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct LinearCoefficient<T> {
     symbol: String,
     coefficients: T,
