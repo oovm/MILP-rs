@@ -1,6 +1,5 @@
 [package]
 name = "milp"
-publish = false
 version = "0.0.0"
 authors = ["Aster <192607617@qq.com>"]
 description = "..."
@@ -11,6 +10,12 @@ license = "MPL-2.0"
 edition = "2021"
 
 [dependencies]
+
+[dependencies.milp-types]
+version = "0.0.0"
+path = "../milp-types"
+features = []
+
 
 [dev-dependencies]
 
